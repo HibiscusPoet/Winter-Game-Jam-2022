@@ -12,11 +12,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float speed = 50.0f;
     [SerializeField] float jumpHeight = 10.0f;
 
+    private LayerMask groundLayer;
+
     // Start is called before the first frame update
     void Start()
     {
         rigidBody2D = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        groundLayer = LayerMask.GetMask("Ground");
     }
 
     void Update()
@@ -39,10 +43,17 @@ public class PlayerController : MonoBehaviour
 
     void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.up, 1f, groundLayer);
+        Debug.DrawRay(transform.position, -Vector2.up, Color.red);
+
+        if (hit.collider != null)
         {
-            Debug.Log("Jumped");
-            rigidBody2D.AddForce(Vector2.up * jumpHeight, ForceMode2D.Impulse);
+            Debug.Log(hit.collider.name);
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Debug.Log("Jumped");
+                rigidBody2D.AddForce(Vector2.up * jumpHeight, ForceMode2D.Impulse);
+            }
         }
     }
 }
